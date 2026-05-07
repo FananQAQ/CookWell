@@ -1,0 +1,121 @@
+{
+  "pages": [
+    "pages/discover/discover",
+    "pages/mine/mine"
+  ],
+  "subPackages": [
+    {
+      "root": "package-cook",
+      "name": "cook",
+      "pages": [
+        "pages/detail/detail",
+        "pages/summary/summary",
+        "pages/menu-detail/menu-detail"
+      ]
+    },
+    {
+      "root": "package-r-aquatic",
+      "name": "r-aquatic",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-breakfast",
+      "name": "r-breakfast",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-condiment",
+      "name": "r-condiment",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-dessert",
+      "name": "r-dessert",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-drink",
+      "name": "r-drink",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-meat-0",
+      "name": "r-meat-0",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-meat-1",
+      "name": "r-meat-1",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-meat-2",
+      "name": "r-meat-2",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-meat-3",
+      "name": "r-meat-3",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-semi-finished",
+      "name": "r-semi",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-soup",
+      "name": "r-soup",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-staple-0",
+      "name": "r-staple-0",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-staple-1",
+      "name": "r-staple-1",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-veg-0",
+      "name": "r-veg-0",
+      "pages": ["pages/_noop/_noop"]
+    },
+    {
+      "root": "package-r-veg-1",
+      "name": "r-veg-1",
+      "pages": ["pages/_noop/_noop"]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "CookWell",
+    "navigationBarBackgroundColor": "#faf8f5"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#8a8a8a",
+    "selectedColor": "#c45c26",
+    "backgroundColor": "#f3f0ea",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/discover/discover",
+        "text": "菜谱",
+        "iconPath": "images/tab-discover.png",
+        "selectedIconPath": "images/tab-discover.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的菜单",
+        "iconPath": "images/tab-mine.png",
+        "selectedIconPath": "images/tab-mine.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "componentFramework": "exparser",
+  "sitemapLocation": "sitemap.json"
+}

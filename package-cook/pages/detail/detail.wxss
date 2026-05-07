@@ -1,0 +1,116 @@
+.page {
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+}
+
+.hero {
+  background: #eae6df;
+}
+
+.cover {
+  width: 100%;
+  display: block;
+  min-height: 200rpx;
+}
+
+.card {
+  margin: 16rpx;
+  padding: 28rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  border: 1rpx solid #eee9e2;
+}
+
+.h1 {
+  font-size: 40rpx;
+  font-weight: 600;
+  display: block;
+}
+
+.diff {
+  display: block;
+  margin-top: 12rpx;
+  color: #888;
+  font-size: 24rpx;
+}
+
+.section {
+  margin-top: 32rpx;
+}
+
+.h2 {
+  font-size: 28rpx;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 12rpx;
+  color: #c45c26;
+}
+
+.li {
+  display: block;
+  font-size: 26rpx;
+  line-height: 1.65;
+  color: #333;
+  margin-bottom: 6rpx;
+}
+
+.pre {
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #444;
+  white-space: pre-wrap;
+}
+
+.state {
+  padding: 80rpx 32rpx;
+  text-align: center;
+  color: #888;
+}
+
+.state.err {
+  color: #b33;
+}
+
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1rpx solid #eee9e2;
+  z-index: 20;
+}
+
+.bar-qty {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.qbtn {
+  width: 64rpx;
+  height: 64rpx;
+  line-height: 60rpx;
+  text-align: center;
+  background: #f5f2ec;
+  border-radius: 12rpx;
+  font-size: 36rpx;
+}
+
+.qnum {
+  min-width: 48rpx;
+  text-align: center;
+  font-size: 30rpx;
+}
+
+.add-btn {
+  flex: 1;
+  background: #c45c26;
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  line-height: 2.4;
+}

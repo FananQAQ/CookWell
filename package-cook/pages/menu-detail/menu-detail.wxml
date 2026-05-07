@@ -1,0 +1,38 @@
+<view class="page safe-bottom" wx:if="{{record}}">
+  <view class="head">
+    <view class="title-card">
+      <text class="h1">{{record.title}}</text>
+      <view class="title-foot">
+        <text class="sub">{{dateText}}</text>
+        <view
+          class="edit-pill"
+          hover-class="edit-pill-hover"
+          bindtap="renameRecord"
+        >
+          <text class="edit-pill-icon">✎</text>
+          <text class="edit-pill-text">编辑名称</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="actions">
+    <button class="btn primary" hover-class="btn-primary-hover" bindtap="goSummary">备料汇总</button>
+    <button class="btn danger plain" hover-class="btn-plain-hover" bindtap="deleteRecord">删除菜单</button>
+  </view>
+
+  <scroll-view class="list" scroll-y>
+    <view
+      class="row"
+      wx:for="{{record.items}}"
+      wx:key="id"
+    >
+      <view class="info" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" bindtap="openDetail">
+        <text class="name">{{item.name}}</text>
+        <text class="meta">{{item.categoryLabel}} · ×{{item.servings}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>
+
+<view class="empty" wx:else>未找到该菜单</view>

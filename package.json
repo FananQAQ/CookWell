@@ -1,0 +1,15 @@
+{
+  "name": "cookwell",
+  "private": true,
+  "description": "仅用于本地脚本（压缩配图），不会打进小程序包；node_modules 已在 packOptions.ignore",
+  "scripts": {
+    "compress:dishes": "node scripts/compress-dish-images.mjs",
+    "compress:dishes:hard": "node scripts/compress-dish-images.mjs --preset=hard",
+    "compress:dishes:extreme": "node scripts/compress-dish-images.mjs --preset=extreme",
+    "compress:dishes:webp": "node scripts/compress-dish-images.mjs --preset=hard --webp",
+    "reshard:pkgs": "node scripts/reshard-large-pkgs.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
+  }
+}

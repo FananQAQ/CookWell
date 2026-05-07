@@ -1,0 +1,42 @@
+.page {
+  min-height: 100vh;
+}
+
+.tip {
+  font-size: 24rpx;
+  color: #888;
+  line-height: 1.5;
+  padding: 24rpx 28rpx 8rpx;
+}
+
+.empty {
+  text-align: center;
+  color: #aaa;
+  padding: 120rpx 32rpx;
+}
+
+.list {
+  height: calc(100vh - 120rpx);
+  padding: 0 16rpx 32rpx;
+}
+
+.row {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 12rpx;
+  border: 1rpx solid #eee9e2;
+}
+
+.title {
+  font-size: 30rpx;
+  font-weight: 500;
+  display: block;
+}
+
+.sub {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #999;
+}

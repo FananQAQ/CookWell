@@ -1,0 +1,105 @@
+<view class="page">
+  <view
+    class="custom-nav"
+    style="padding-top: {{statusBarHeight}}px; box-sizing: border-box;"
+  >
+    <view class="custom-nav-inner" style="height: {{navContentHeight}}px;">
+      <text class="custom-nav-title">菜谱</text>
+    </view>
+  </view>
+
+  <view class="hero">
+    <view class="index-hint">
+      <view class="hint-dot"></view>
+      <text class="hint-text">{{indexHint}}</text>
+    </view>
+    <view class="search-wrap">
+      <icon class="search-icon" type="search" size="18" color="#9a8f82" />
+      <input
+        class="search-input"
+        type="text"
+        placeholder="搜索菜名"
+        placeholder-class="search-ph"
+        confirm-type="search"
+        value="{{keyword}}"
+        bindinput="onKeyword"
+      />
+    </view>
+  </view>
+
+  <scroll-view class="chips" scroll-x enable-flex>
+    <view class="chips-pad">
+      <view
+        class="chip {{activeCategory === item.key ? 'chip-on' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onPickCategory"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view class="list" scroll-y style="height: {{listHeightPx}}px;">
+    <view class="list-pad">
+      <view
+        class="row"
+        wx:for="{{filtered}}"
+        wx:key="_k"
+        data-name="{{item.name}}"
+        data-cat="{{item.categoryKey}}"
+        bindtap="openDetail"
+      >
+        <view class="row-accent"></view>
+        <view class="row-body">
+          <text class="row-name">{{item.name}}</text>
+          <view class="row-foot">
+            <text class="row-tag">{{item.categoryLabel}}</text>
+            <text class="row-hint">查看做法</text>
+          </view>
+        </view>
+        <text class="row-chev" aria-hidden="true">›</text>
+      </view>
+      <view class="empty" wx:if="{{filtered.length === 0}}">
+        <text class="empty-title">没有匹配的菜品</text>
+        <text class="empty-sub">换个关键词或选「全部」试试</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="cart-fab" bindtap="openCart" hover-class="cart-fab-hover">
+    <text class="cart-fab-label">菜单</text>
+    <text class="cart-fab-num">{{cartCount}}</text>
+  </view>
+
+  <view class="mask" wx:if="{{showCart}}" catchtouchmove="noop" bindtap="closeCart"></view>
+  <view class="sheet safe-bottom" wx:if="{{showCart}}">
+    <view class="sheet-grab"></view>
+    <view class="sheet-head">
+      <text class="sheet-title">当前菜单</text>
+      <text class="sheet-link" bindtap="clearCart">清空</text>
+    </view>
+    <scroll-view class="sheet-body" scroll-y wx:if="{{cart.length}}">
+      <view class="sheet-row" wx:for="{{cart}}" wx:key="id">
+        <view class="sheet-info" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" bindtap="openDetailFromCart">
+          <text class="sheet-name">{{item.name}}</text>
+          <text class="sheet-sub">{{item.categoryLabel}}</text>
+        </view>
+        <view class="qty">
+          <view class="qty-btn" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" data-d="-1" bindtap="changeQty">−</view>
+          <text class="qty-num">{{item.servings}}</text>
+          <view class="qty-btn" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" data-d="1" bindtap="changeQty">+</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="sheet-empty" wx:else>
+      <text class="sheet-empty-title">还没有选菜</text>
+      <text class="sheet-empty-sub">在菜谱里点进详情，设置份数后加入菜单</text>
+    </view>
+    <view class="sheet-actions">
+      <button class="btn secondary" disabled="{{!cart.length}}" bindtap="goSummary">去汇总备料</button>
+      <button class="btn primary" disabled="{{!cart.length}}" bindtap="submitMenu">提交保存</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,154 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.seg {
+  display: flex;
+  margin: 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 1rpx solid #eee9e2;
+  overflow: hidden;
+}
+
+.seg-item {
+  flex: 1;
+  text-align: center;
+  padding: 22rpx 0;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.seg-item.on {
+  background: #fff3e8;
+  color: #c45c26;
+  font-weight: 600;
+}
+
+.state {
+  padding: 60rpx;
+  text-align: center;
+  color: #888;
+}
+
+.state.err {
+  color: #b33;
+}
+
+.body {
+  flex: 1;
+  height: 0;
+  padding: 0 16rpx 32rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  border: 1rpx solid #eee9e2;
+}
+
+.card-head {
+  margin-bottom: 12rpx;
+}
+
+.dish-title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.dish-sub {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.block {
+  margin-top: 20rpx;
+}
+
+.bh {
+  font-size: 24rpx;
+  color: #c45c26;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.li {
+  display: block;
+  font-size: 26rpx;
+  line-height: 1.55;
+  color: #333;
+}
+
+.more {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  color: #c45c26;
+}
+
+.hint {
+  font-size: 22rpx;
+  color: #888;
+  line-height: 1.5;
+  padding: 0 8rpx 16rpx;
+}
+
+.merge-key {
+  font-size: 28rpx;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.merge-row {
+  padding: 12rpx 0;
+  border-top: 1rpx solid #f5f2ec;
+}
+
+.merge-row-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12rpx;
+}
+
+.merge-check {
+  flex-shrink: 0;
+  width: 36rpx;
+  font-size: 26rpx;
+  color: #c45c26;
+  line-height: 1.35;
+}
+
+.merge-check.off {
+  color: #c4bbb0;
+}
+
+.merge-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.merge-dish {
+  font-size: 22rpx;
+  color: #999;
+  display: block;
+}
+
+.merge-line {
+  font-size: 26rpx;
+  color: #333;
+  margin-top: 4rpx;
+}
+
+.merge-row.purchased .merge-dish,
+.merge-row.purchased .merge-line {
+  text-decoration: line-through;
+  color: #a8a098;
+}
