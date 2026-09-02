@@ -33,12 +33,21 @@ Page({
   loadRecord() {
     const id = this.menuId
     const list = readMenuHistory()
-    const record = list.find(x => x.id === id)
-    if (record) {
-      wx.setNavigationBarTitle({ title: record.title || '菜单详情' })
+    const hit = list.find(x => x.id === id)
+    if (hit) {
+      wx.setNavigationBarTitle({ title: hit.title || '菜单详情' })
     }
+    const record = hit
+      ? {
+          ...hit,
+          items: (hit.items || []).map(it => ({
+            ...it,
+            id: it.id || `${it.categoryKey}::${it.name}`
+          }))
+        }
+      : null
     this.setData({
-      record: record || null,
+      record,
       dateText: record ? formatLocal(record.createdAt) : ''
     })
   },

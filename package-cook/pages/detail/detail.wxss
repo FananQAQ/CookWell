@@ -30,12 +30,6 @@
   width: 100%;
   display: block;
   min-height: 200rpx;
-  opacity: 0;
-  transition: opacity 0.18s ease-out;
-}
-
-.cover.ready {
-  opacity: 1;
 }
 
 .state {

@@ -13,7 +13,6 @@ Page({
     categoryLabel: '',
     coverUrl: '',
     _coverFallback: '',
-    coverReady: false,
     coverFailed: false,
     err: '',
     qty: 1,
@@ -51,7 +50,6 @@ Page({
       showAddBar,
       coverUrl: cover.primary,
       _coverFallback: cover.fallback,
-      coverReady: false,
       coverFailed: false,
       err: ''
     })
@@ -95,16 +93,10 @@ Page({
     }
   },
 
-  onCoverLoad() {
-    if (!this.data.coverReady) {
-      this.setData({ coverReady: true })
-    }
-  },
-
   reloadLocalCover() {
     const cover = this._pendingCover
     if (!cover || !cover.primary) return
-    this.setData({ coverUrl: '', coverReady: false, coverFailed: false })
+    this.setData({ coverUrl: '', coverFailed: false })
     setTimeout(() => {
       if (this._gone) return
       this.setData({
@@ -132,11 +124,10 @@ Page({
           if (_coverFallback && coverUrl !== _coverFallback) {
             this.setData({
               coverUrl: _coverFallback,
-              _coverFallback: '',
-              coverReady: false
+              _coverFallback: ''
             })
           } else {
-            this.setData({ coverUrl: '', coverFailed: true, coverReady: false })
+            this.setData({ coverUrl: '', coverFailed: true })
           }
         })
       return
@@ -145,12 +136,11 @@ Page({
     if (_coverFallback && coverUrl !== _coverFallback) {
       this.setData({
         coverUrl: _coverFallback,
-        _coverFallback: '',
-        coverReady: false
+        _coverFallback: ''
       })
       return
     }
-    this.setData({ coverUrl: '', coverFailed: true, coverReady: false })
+    this.setData({ coverUrl: '', coverFailed: true })
   },
 
   openQtySheet() {

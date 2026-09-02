@@ -98,16 +98,6 @@ Page({
     })
   },
 
-  onCoverLoad(e) {
-    const i = Number(e.currentTarget.dataset.i)
-    const list = this.data.byDish || []
-    if (!Number.isFinite(i) || !list[i] || list[i].coverReady) return
-    const byDish = list.map((row, idx) =>
-      idx === i ? { ...row, coverReady: true } : row
-    )
-    this.setData({ byDish })
-  },
-
   onCoverErr(e) {
     const i = Number(e.currentTarget.dataset.i)
     const list = this.data.byDish || []
@@ -141,8 +131,7 @@ Page({
               return {
                 ...row,
                 coverUrl: cover.primary,
-                coverFallback: cover.fallback,
-                coverReady: false
+                coverFallback: cover.fallback
               }
             })
             this.setData({ byDish: latest })
@@ -203,8 +192,7 @@ Page({
         categoryLabel: it.categoryLabel || '',
         servings: it.servings,
         coverUrl: cover.primary,
-        coverFallback: cover.fallback,
-        coverReady: false
+        coverFallback: cover.fallback
       }
     })
   },

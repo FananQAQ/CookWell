@@ -19,7 +19,6 @@
       <scroll-view
         class="dish-nav"
         scroll-x
-        enable-flex
         scroll-with-animation
         scroll-into-view="{{navScrollInto}}"
       >
@@ -42,11 +41,10 @@
         <swiper-item wx:for="{{byDish}}" wx:key="name">
           <scroll-view class="dish-slide" scroll-y>
             <image
-              class="dish-cover {{item.coverReady ? 'ready' : ''}}"
+              class="dish-cover"
               src="{{item.coverUrl}}"
               mode="widthFix"
               data-i="{{index}}"
-              bindload="onCoverLoad"
               binderror="onCoverErr"
             />
           </scroll-view>

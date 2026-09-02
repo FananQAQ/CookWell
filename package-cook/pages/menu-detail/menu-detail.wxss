@@ -118,9 +118,11 @@ button.btn::after {
 }
 
 .list {
-  flex: 1;
-  height: 0;
+  /* 避开 iOS scroll-view 在 flex+height:0 下高度为 0 */
+  height: calc(100vh - 360rpx);
+  min-height: 40vh;
   padding: 4rpx 16rpx 32rpx;
+  box-sizing: border-box;
 }
 
 .row {

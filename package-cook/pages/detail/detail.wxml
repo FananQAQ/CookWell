@@ -1,11 +1,10 @@
 <view class="page safe-bottom {{showAddBar ? 'with-bar' : ''}}">
   <view class="hero" wx:if="{{!coverFailed}}">
     <image
-      class="cover {{coverReady ? 'ready' : ''}}"
+      class="cover"
       src="{{coverUrl}}"
       mode="widthFix"
       lazy-load="{{false}}"
-      bindload="onCoverLoad"
       binderror="onImgErr"
       wx:if="{{coverUrl}}"
     />

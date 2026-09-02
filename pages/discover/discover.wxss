@@ -300,10 +300,11 @@
 }
 
 .sheet-body {
-  flex: 1;
-  height: 0;
+  /* iOS 真机上 scroll-view + height:0 会塌成不可见，需给明确高度 */
+  height: 42vh;
   max-height: 42vh;
   padding: 12rpx 0;
+  box-sizing: border-box;
 }
 
 .sheet-row {

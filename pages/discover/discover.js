@@ -244,6 +244,7 @@ Page({
   },
 
   openCart() {
+    this.refreshCart()
     this.setData({ showCart: true })
     const cart = readCart()
     if (cart.length) {
@@ -258,7 +259,10 @@ Page({
   noop() {},
 
   refreshCart() {
-    const cart = readCart()
+    const cart = readCart().map(x => ({
+      ...x,
+      id: x.id || `${x.categoryKey}::${x.name}`
+    }))
     // 角标按菜品种数：3 道菜各 2 份 → 显示 3，不是 6
     this.setData({ cart, cartCount: cart.length })
   },
