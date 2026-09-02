@@ -1,29 +1,20 @@
 <view class="page safe-bottom">
   <view class="hero" wx:if="{{coverUrl}}">
-    <image class="cover" src="{{coverUrl}}" mode="widthFix" binderror="onImgErr" />
+    <image
+      class="cover"
+      src="{{coverUrl}}"
+      mode="widthFix"
+      lazy-load="{{false}}"
+      binderror="onImgErr"
+    />
   </view>
-  <view class="card" wx:if="{{!loading && !err}}">
-    <text class="h1">{{title || name}}</text>
-    <text class="diff" wx:if="{{difficulty}}">难度 {{difficulty}}</text>
-    <view class="section" wx:if="{{toolLines.length}}">
-      <text class="h2">必备原料和工具</text>
-      <text class="li" wx:for="{{toolLines}}" wx:key="*this">· {{item}}</text>
-    </view>
-    <view class="section" wx:if="{{calcText}}">
-      <text class="h2">计算（按份数）</text>
-      <text class="pre">{{calcText}}</text>
-    </view>
-    <view class="section" wx:if="{{stepLines.length}}">
-      <text class="h2">操作</text>
-      <text class="li" wx:for="{{stepLines}}" wx:for-index="idx" wx:key="idx">{{idx + 1}}. {{item}}</text>
-    </view>
-    <view class="section" wx:if="{{extraLines.length}}">
-      <text class="h2">附加说明</text>
-      <text class="li" wx:for="{{extraLines}}" wx:key="*this">· {{item}}</text>
-    </view>
+  <view class="hero hero-empty" wx:elif="{{coverFailed}}">
+    <text class="hero-tip">暂无封面</text>
+  </view>
+  <view class="hero hero-empty" wx:elif="{{loading}}">
+    <text class="hero-tip">加载中…</text>
   </view>
 
-  <view class="state" wx:if="{{loading}}">加载菜谱中…</view>
   <view class="state err" wx:if="{{err}}">{{err}}</view>
 
   <view class="bar" wx:if="{{!loading && !err}}">

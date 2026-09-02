@@ -14,77 +14,77 @@
       ]
     },
     {
-      "root": "package-r-aquatic",
+      "root": "package-recipes/aquatic",
       "name": "r-aquatic",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-breakfast",
+      "root": "package-recipes/breakfast",
       "name": "r-breakfast",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-condiment",
+      "root": "package-recipes/condiment",
       "name": "r-condiment",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-dessert",
+      "root": "package-recipes/dessert",
       "name": "r-dessert",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-drink",
+      "root": "package-recipes/drink",
       "name": "r-drink",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-meat-0",
+      "root": "package-recipes/meat-0",
       "name": "r-meat-0",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-meat-1",
+      "root": "package-recipes/meat-1",
       "name": "r-meat-1",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-meat-2",
+      "root": "package-recipes/meat-2",
       "name": "r-meat-2",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-meat-3",
+      "root": "package-recipes/meat-3",
       "name": "r-meat-3",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-semi-finished",
+      "root": "package-recipes/semi-finished",
       "name": "r-semi",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-soup",
+      "root": "package-recipes/soup",
       "name": "r-soup",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-staple-0",
+      "root": "package-recipes/staple-0",
       "name": "r-staple-0",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-staple-1",
+      "root": "package-recipes/staple-1",
       "name": "r-staple-1",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-veg-0",
+      "root": "package-recipes/veg-0",
       "name": "r-veg-0",
       "pages": ["pages/_noop/_noop"]
     },
     {
-      "root": "package-r-veg-1",
+      "root": "package-recipes/veg-1",
       "name": "r-veg-1",
       "pages": ["pages/_noop/_noop"]
     }

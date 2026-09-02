@@ -12,6 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
 const require = createRequire(import.meta.url)
 const { candidateMdUrls } = require('../utils/recipe-md-fetch.js')
+const { packageFolderForRecipe } = require('../utils/recipe-shard.js')
 
 function fetchText(url) {
   return new Promise((resolve, reject) => {
@@ -52,7 +53,12 @@ if (!cat || !name) {
   process.exit(1)
 }
 
-const jsPath = path.join(ROOT, `package-r-${cat}`, 'recipes', `${cat}.js`)
+const jsPath = path.join(
+  ROOT,
+  packageFolderForRecipe(cat, name),
+  'recipes',
+  `${cat}.js`
+)
 if (!fs.existsSync(jsPath)) {
   console.error('Missing file:', jsPath)
   process.exit(1)

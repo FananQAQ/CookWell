@@ -1,15 +1,12 @@
-/**
- * 将各 package-r-*/images/dishes（及旧路径 package-cook/images/dishes）下配图压到适合上传的体积。
- * 默认：宽≤480、jpeg q≈65。
- *
- * 常用：
- *   node scripts/compress-dish-images.mjs --preset=hard
- *   node scripts/compress-dish-images.mjs --preset=extreme
- *   node scripts/compress-dish-images.mjs --preset=hard --webp
- * 自定义：--width=400 --quality=55
- *
- * 使用 --webp 会把 .jpeg/.jpg 转为 .webp 并删除原图；请把 utils/constants.js 里 DISH_COVER_EXT 改为 'webp'。
- */
+// Compress dish covers under package-recipes/*/images/dishes (and legacy package-cook path).
+// Default: width<=480, jpeg q~65.
+// Usage:
+//   node scripts/compress-dish-images.mjs --preset=hard
+//   node scripts/compress-dish-images.mjs --preset=extreme
+//   node scripts/compress-dish-images.mjs --preset=hard --webp
+// Custom: --width=400 --quality=55
+// --webp converts jpeg/jpg to webp and deletes originals; set DISH_COVER_EXT to 'webp'.
+// Note: do not put "star-slash" inside block comments (breaks parsing).
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -69,11 +66,14 @@ async function main() {
     const roots = []
     const legacy = path.join(ROOT, 'package-cook', 'images', 'dishes')
     if (fs.existsSync(legacy)) roots.push(legacy)
+    const recipesRoot = path.join(ROOT, 'package-recipes')
     try {
-      for (const ent of fs.readdirSync(ROOT, { withFileTypes: true })) {
-        if (!ent.isDirectory() || !ent.name.startsWith('package-r-')) continue
-        const p = path.join(ROOT, ent.name, 'images', 'dishes')
-        if (fs.existsSync(p)) roots.push(p)
+      if (fs.existsSync(recipesRoot)) {
+        for (const ent of fs.readdirSync(recipesRoot, { withFileTypes: true })) {
+          if (!ent.isDirectory()) continue
+          const p = path.join(recipesRoot, ent.name, 'images', 'dishes')
+          if (fs.existsSync(p)) roots.push(p)
+        }
       }
     } catch (_) {}
     return roots
@@ -82,7 +82,7 @@ async function main() {
   const roots = dishImageRoots()
   if (roots.length === 0) {
     console.error(
-      '未找到配图目录：请先有 package-r-*/images/dishes 或 package-cook/images/dishes'
+      '未找到配图目录：请先有 package-recipes/*/images/dishes 或 package-cook/images/dishes'
     )
     process.exit(1)
   }
@@ -131,7 +131,7 @@ async function main() {
   }
   console.log('完成。累计约减小', Math.round(saved / 1024 / 1024), 'MB（相对压缩前）')
   if (useWebp) {
-    console.log('已将图片转为 webp，请把 utils/constants.js 中 DISH_COVER_EXT 设为 \'webp\'。')
+    console.log("已将图片转为 webp，请把 utils/constants.js 中 DISH_COVER_EXT 设为 'webp'。")
   }
 }
 

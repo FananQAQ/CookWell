@@ -14,7 +14,8 @@ const require = createRequire(import.meta.url)
 const {
   SHARD_COUNT,
   hashShard,
-  packageFolderForRecipe
+  packageFolderForRecipe,
+  packageFolderForShard
 } = require(path.join(ROOT, 'utils', 'recipe-shard.js'))
 
 const NOOP_JS = 'Page({})\n'
@@ -57,11 +58,7 @@ function reshardCategory(categoryKey, oldFolderName) {
   }
 
   for (let i = 0; i < n; i++) {
-    let folder
-    if (categoryKey === 'meat_dish') folder = `package-r-meat-${i}`
-    else if (categoryKey === 'staple') folder = `package-r-staple-${i}`
-    else if (categoryKey === 'vegetable_dish') folder = `package-r-veg-${i}`
-    else folder = `package-r-${categoryKey}-${i}`
+    const folder = packageFolderForShard(categoryKey, i)
     const pkgRoot = path.join(ROOT, folder)
     writeNoop(pkgRoot)
     const outJs = path.join(pkgRoot, 'recipes', `${categoryKey}.js`)
@@ -95,10 +92,10 @@ function reshardCategory(categoryKey, oldFolderName) {
 }
 
 function main() {
-  reshardCategory('meat_dish', 'package-r-meat_dish')
-  reshardCategory('staple', 'package-r-staple')
-  reshardCategory('vegetable_dish', 'package-r-vegetable_dish')
-  console.log('完成。请使用仓库中的 app.json（已注册 meat-*/staple-*/veg-* 分包）。')
+  reshardCategory('meat_dish', 'package-recipes/meat_dish')
+  reshardCategory('staple', 'package-recipes/staple')
+  reshardCategory('vegetable_dish', 'package-recipes/vegetable_dish')
+  console.log('完成。请确认 app.json 已注册 package-recipes/meat-* 等分包。')
 }
 
 main()

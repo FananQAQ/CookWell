@@ -1,5 +1,5 @@
 /**
- * 将 Anduin2017/HowToCook 的 .md 与 king-jingxiang 配图拉取到各 package-r-<分类>/（正文与封面同包），供离线使用。
+ * 将 Anduin2017/HowToCook 的 .md 与 king-jingxiang 配图拉取到 package-recipes/<分类>/（正文与封面同包），供离线使用。
  * 运行: node scripts/bundle-recipes.mjs
  * 仅正文: node scripts/bundle-recipes.mjs --md-only
  * 仅补图: node scripts/bundle-recipes.mjs --images-only
@@ -16,7 +16,8 @@ const catalog = require(path.join(ROOT, 'data/dishes.js'))
 const {
   SHARD_COUNT,
   hashShard,
-  packageFolderForRecipe
+  packageFolderForRecipe,
+  packageFolderForShard
 } = require(path.join(ROOT, 'utils', 'recipe-shard.js'))
 const { candidateMdUrls } = require(path.join(ROOT, 'utils', 'recipe-md-fetch.js'))
 
@@ -113,20 +114,16 @@ async function main() {
   function recipeWriteParts(cat, obj) {
     const n = SHARD_COUNT[cat]
     if (!n) {
-      return [{ folder: `package-r-${cat}`, part: obj }]
+      return [{ folder: packageFolderForShard(cat, 0), part: obj }]
     }
     const shards = Array.from({ length: n }, () => ({}))
     for (const [k, v] of Object.entries(obj)) {
       shards[hashShard(k, n)][k] = v
     }
-    return shards.map((part, i) => {
-      let folder
-      if (cat === 'meat_dish') folder = `package-r-meat-${i}`
-      else if (cat === 'staple') folder = `package-r-staple-${i}`
-      else if (cat === 'vegetable_dish') folder = `package-r-veg-${i}`
-      else folder = `package-r-${cat}`
-      return { folder, part }
-    })
+    return shards.map((part, i) => ({
+      folder: packageFolderForShard(cat, i),
+      part
+    }))
   }
 
   function safeRequireRecipeFile(absPath) {
@@ -146,43 +143,10 @@ async function main() {
   /** 读取磁盘上已有正文，避免本次拉取失败时把整类覆盖成「缺菜」 */
   function loadExistingRecipesForCategory(catKey) {
     const merged = {}
-    if (catKey === 'meat_dish') {
-      for (let i = 0; i < 4; i++) {
-        const p = path.join(
-          ROOT,
-          `package-r-meat-${i}`,
-          'recipes',
-          'meat_dish.js'
-        )
-        Object.assign(merged, safeRequireRecipeFile(p))
-      }
-    } else if (catKey === 'staple') {
-      for (let i = 0; i < 2; i++) {
-        const p = path.join(
-          ROOT,
-          `package-r-staple-${i}`,
-          'recipes',
-          'staple.js'
-        )
-        Object.assign(merged, safeRequireRecipeFile(p))
-      }
-    } else if (catKey === 'vegetable_dish') {
-      for (let i = 0; i < 2; i++) {
-        const p = path.join(
-          ROOT,
-          `package-r-veg-${i}`,
-          'recipes',
-          'vegetable_dish.js'
-        )
-        Object.assign(merged, safeRequireRecipeFile(p))
-      }
-    } else {
-      const p = path.join(
-        ROOT,
-        `package-r-${catKey}`,
-        'recipes',
-        `${catKey}.js`
-      )
+    const n = SHARD_COUNT[catKey] || 1
+    for (let i = 0; i < n; i++) {
+      const folder = packageFolderForShard(catKey, i)
+      const p = path.join(ROOT, folder, 'recipes', `${catKey}.js`)
       Object.assign(merged, safeRequireRecipeFile(p))
     }
     return merged

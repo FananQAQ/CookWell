@@ -1,5 +1,5 @@
 /**
- * 对比 data/dishes.js 与各 package-r-* 正文，列出缺失或过短的菜。
+ * 对比 data/dishes.js 与 package-recipes/* 正文，列出缺失或过短的菜。
  *   node scripts/audit-missing-md.cjs
  */
 const fs = require('fs')
@@ -7,7 +7,8 @@ const path = require('path')
 const catalog = require('../data/dishes.js')
 const {
   SHARD_COUNT,
-  hashShard
+  packageFolderForRecipe,
+  packageFolderForShard
 } = require('../utils/recipe-shard.js')
 
 const ROOT = path.join(__dirname, '..')
@@ -29,54 +30,20 @@ function safeRequire(absPath) {
 
 function loadMerged(catKey) {
   const merged = {}
-  if (catKey === 'meat_dish') {
-    for (let i = 0; i < 4; i++) {
-      Object.assign(
-        merged,
-        safeRequire(path.join(ROOT, `package-r-meat-${i}`, 'recipes', 'meat_dish.js'))
-      )
-    }
-  } else if (catKey === 'staple') {
-    for (let i = 0; i < 2; i++) {
-      Object.assign(
-        merged,
-        safeRequire(path.join(ROOT, `package-r-staple-${i}`, 'recipes', 'staple.js'))
-      )
-    }
-  } else if (catKey === 'vegetable_dish') {
-    for (let i = 0; i < 2; i++) {
-      Object.assign(
-        merged,
-        safeRequire(path.join(ROOT, `package-r-veg-${i}`, 'recipes', 'vegetable_dish.js'))
-      )
-    }
-  } else {
+  const n = SHARD_COUNT[catKey] || 1
+  for (let i = 0; i < n; i++) {
+    const folder = packageFolderForShard(catKey, i)
     Object.assign(
       merged,
-      safeRequire(
-        path.join(ROOT, `package-r-${catKey}`, 'recipes', `${catKey}.js`)
-      )
+      safeRequire(path.join(ROOT, folder, 'recipes', `${catKey}.js`))
     )
   }
   return merged
 }
 
 function shardPath(catKey, name) {
-  const n = SHARD_COUNT[catKey]
-  if (!n) {
-    return path.join(ROOT, `package-r-${catKey}`, 'recipes', `${catKey}.js`)
-  }
-  const s = hashShard(name, n)
-  if (catKey === 'meat_dish') {
-    return path.join(ROOT, `package-r-meat-${s}`, 'recipes', 'meat_dish.js')
-  }
-  if (catKey === 'staple') {
-    return path.join(ROOT, `package-r-staple-${s}`, 'recipes', 'staple.js')
-  }
-  if (catKey === 'vegetable_dish') {
-    return path.join(ROOT, `package-r-veg-${s}`, 'recipes', 'vegetable_dish.js')
-  }
-  return path.join(ROOT, `package-r-${catKey}`, 'recipes', `${catKey}.js`)
+  const folder = packageFolderForRecipe(catKey, name)
+  return path.join(ROOT, folder, 'recipes', `${catKey}.js`)
 }
 
 const dishes = Array.isArray(catalog.dishes) ? catalog.dishes : []

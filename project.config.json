@@ -10,6 +10,14 @@
       {
         "type": "folder",
         "value": "node_modules"
+      },
+      {
+        "type": "file",
+        "value": "data/dishes.json"
+      },
+      {
+        "type": "file",
+        "value": "package-lock.json"
       }
     ],
     "include": []

@@ -12,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
 const require = createRequire(import.meta.url)
 const catalog = require(path.join(ROOT, 'data/dishes.js'))
-const { SHARD_COUNT, hashShard } = require(path.join(ROOT, 'utils/recipe-shard.js'))
+const { SHARD_COUNT, packageFolderForRecipe, packageFolderForShard } = require(path.join(ROOT, 'utils/recipe-shard.js'))
 const { candidateMdUrls } = require(path.join(ROOT, 'utils/recipe-md-fetch.js'))
 
 const FETCH_MS = 45000
@@ -62,52 +62,18 @@ function safeRequire(absPath) {
 }
 
 function recipeFileForDish(categoryKey, name) {
-  const n = SHARD_COUNT[categoryKey]
-  if (!n) {
-    return path.join(ROOT, `package-r-${categoryKey}`, 'recipes', `${categoryKey}.js`)
-  }
-  const s = hashShard(name, n)
-  if (categoryKey === 'meat_dish') {
-    return path.join(ROOT, `package-r-meat-${s}`, 'recipes', 'meat_dish.js')
-  }
-  if (categoryKey === 'staple') {
-    return path.join(ROOT, `package-r-staple-${s}`, 'recipes', 'staple.js')
-  }
-  if (categoryKey === 'vegetable_dish') {
-    return path.join(ROOT, `package-r-veg-${s}`, 'recipes', 'vegetable_dish.js')
-  }
-  return path.join(ROOT, `package-r-${categoryKey}`, 'recipes', `${categoryKey}.js`)
+  const folder = packageFolderForRecipe(categoryKey, name)
+  return path.join(ROOT, folder, 'recipes', `${categoryKey}.js`)
 }
 
 function loadMerged(catKey) {
   const merged = {}
-  if (catKey === 'meat_dish') {
-    for (let i = 0; i < 4; i++) {
-      Object.assign(
-        merged,
-        safeRequire(path.join(ROOT, `package-r-meat-${i}`, 'recipes', 'meat_dish.js'))
-      )
-    }
-  } else if (catKey === 'staple') {
-    for (let i = 0; i < 2; i++) {
-      Object.assign(
-        merged,
-        safeRequire(path.join(ROOT, `package-r-staple-${i}`, 'recipes', 'staple.js'))
-      )
-    }
-  } else if (catKey === 'vegetable_dish') {
-    for (let i = 0; i < 2; i++) {
-      Object.assign(
-        merged,
-        safeRequire(path.join(ROOT, `package-r-veg-${i}`, 'recipes', 'vegetable_dish.js'))
-      )
-    }
-  } else {
+  const n = SHARD_COUNT[catKey] || 1
+  for (let i = 0; i < n; i++) {
+    const folder = packageFolderForShard(catKey, i)
     Object.assign(
       merged,
-      safeRequire(
-        path.join(ROOT, `package-r-${catKey}`, 'recipes', `${catKey}.js`)
-      )
+      safeRequire(path.join(ROOT, folder, 'recipes', `${catKey}.js`))
     )
   }
   return merged

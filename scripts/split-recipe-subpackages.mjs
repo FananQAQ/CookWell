@@ -1,5 +1,5 @@
 /**
- * 将 package-cook/data/recipes/*.js 与 images/dishes/<cat> 迁到各 package-r-<categoryKey>/，
+ * 将 package-cook/data/recipes/*.js 与 images/dishes/<cat> 迁到 package-recipes/<categoryKey>/，
  * 便于单包体积低于微信限制。仅需执行一次（或拉取新数据后若仍打在旧路径可再跑）。
  *
  *   node scripts/split-recipe-subpackages.mjs
@@ -13,6 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
 const require = createRequire(import.meta.url)
 const catalog = require(path.join(ROOT, 'data', 'dishes.js'))
+const { packageFolderForShard } = require(path.join(ROOT, 'utils', 'recipe-shard.js'))
 
 const NOOP_JS = 'Page({})\n'
 const NOOP_JSON = '{"usingComponents":{}}\n'
@@ -36,7 +37,7 @@ function main() {
   keys.sort()
 
   for (const key of keys) {
-    const pkg = `package-r-${key}`
+    const pkg = packageFolderForShard(key, 0)
     const pkgRoot = path.join(ROOT, pkg)
     const noopDir = path.join(pkgRoot, 'pages', '_noop')
     mkdir(noopDir)
@@ -71,7 +72,7 @@ function main() {
   rmDirIfEmpty(oldDishes)
   rmDirIfEmpty(path.join(ROOT, 'package-cook', 'images'))
 
-  console.log('完成。请确认 app.json 已包含各 package-r-* 分包。')
+  console.log('完成。请确认 app.json 已包含各 package-recipes/* 分包。')
   console.log('荤菜/主食/素菜单包可能仍 >2MB，请执行：node scripts/reshard-large-pkgs.mjs')
 }
 
