@@ -35,28 +35,7 @@
 
 .hero {
   flex-shrink: 0;
-  padding: 8rpx 24rpx 0;
-}
-
-.index-hint {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  padding: 16rpx 4rpx 20rpx;
-}
-
-.hint-dot {
-  width: 12rpx;
-  height: 12rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #d4a574, #c45c26);
-  flex-shrink: 0;
-}
-
-.hint-text {
-  font-size: 24rpx;
-  color: #7a7268;
-  letter-spacing: 0.5rpx;
+  padding: 16rpx 24rpx 0;
 }
 
 .search-wrap {

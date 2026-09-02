@@ -2,13 +2,6 @@
   min-height: 100vh;
 }
 
-.tip {
-  font-size: 24rpx;
-  color: #888;
-  line-height: 1.5;
-  padding: 24rpx 28rpx 8rpx;
-}
-
 .empty {
   text-align: center;
   color: #aaa;
@@ -16,8 +9,8 @@
 }
 
 .list {
-  height: calc(100vh - 120rpx);
-  padding: 0 16rpx 32rpx;
+  height: calc(100vh - 32rpx);
+  padding: 16rpx 16rpx 32rpx;
 }
 
 .row {

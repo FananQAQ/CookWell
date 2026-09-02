@@ -103,13 +103,6 @@
   border: 1rpx solid #eee9e2;
 }
 
-.hint {
-  font-size: 22rpx;
-  color: #888;
-  line-height: 1.5;
-  padding: 0 8rpx 16rpx;
-}
-
 .merge-key {
   font-size: 28rpx;
   font-weight: 600;

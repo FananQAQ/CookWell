@@ -1,5 +1,4 @@
 <view class="page safe-bottom">
-  <view class="tip">提交保存的菜单会出现在这里，可随时查看吃了什么、备料与做法。</view>
   <view class="empty" wx:if="{{!list.length}}">暂无历史菜单</view>
   <scroll-view class="list" scroll-y wx:else>
     <view

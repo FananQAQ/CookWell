@@ -9,10 +9,6 @@
   </view>
 
   <view class="hero">
-    <view class="index-hint">
-      <view class="hint-dot"></view>
-      <text class="hint-text">{{indexHint}}</text>
-    </view>
     <view class="search-wrap">
       <icon class="search-icon" type="search" size="18" color="#9a8f82" />
       <input

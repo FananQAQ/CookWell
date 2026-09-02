@@ -55,7 +55,6 @@ Page({
     cartCount: 0,
     showCart: false,
     listHeightPx: 400,
-    indexHint: '本地索引 · ' + DISH_LIST.length + ' 道菜',
     statusBarHeight: 20,
     navContentHeight: 44
   },

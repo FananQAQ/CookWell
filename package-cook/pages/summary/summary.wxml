@@ -55,7 +55,6 @@
     </block>
 
     <scroll-view class="body" scroll-y wx:else>
-      <view class="hint">合并清单会把同物异名归并（如蒜片/蒜末→大蒜）。组内仍保留各菜原文用量，请人工核对「约、可选」等表述。点一行可标记「已买」。</view>
       <view class="card" wx:for="{{merged}}" wx:key="key">
         <text class="merge-key">{{item.key}}</text>
         <view
