@@ -14,7 +14,10 @@ Page({
     coverFailed: false,
     loading: true,
     err: '',
-    qty: 1
+    qty: 1,
+    inCart: false,
+    showQtySheet: false,
+    draftQty: 1
   },
 
   onLoad(query) {
@@ -25,14 +28,9 @@ Page({
       d => d.name === name && d.categoryKey === categoryKey
     )
     const categoryLabel = hit ? hit.categoryLabel : ''
-    const cart = readCart()
-    const line = cart.find(
-      x => x.name === name && x.categoryKey === categoryKey
-    )
-    const qty = Math.max(1, line ? line.servings : 1)
+    const { qty, inCart } = this.readCartLine(name, categoryKey)
 
     const cover = resolveCoverUrls(categoryKey, name)
-    // remote：立刻挂图床；local：等分包就绪后再挂，避免 image 500
     const earlyCover = DISH_COVER_MODE === 'remote'
 
     this.setData({
@@ -40,6 +38,7 @@ Page({
       categoryKey,
       categoryLabel,
       qty,
+      inCart,
       coverUrl: earlyCover ? cover.primary : '',
       _coverFallback: cover.fallback,
       coverFailed: false,
@@ -52,18 +51,26 @@ Page({
   },
 
   onShow() {
-    const { name, categoryKey } = this.data
-    if (!name) return
+    this.syncCartState()
+  },
+
+  readCartLine(name, categoryKey) {
     const line = readCart().find(
       x => x.name === name && x.categoryKey === categoryKey
     )
-    const next = Math.max(1, line ? line.servings : 1)
-    if (next !== this.data.qty) {
-      this.setData({ qty: next })
+    if (!line) return { qty: 1, inCart: false }
+    return { qty: Math.max(1, line.servings), inCart: true }
+  },
+
+  syncCartState() {
+    const { name, categoryKey } = this.data
+    if (!name) return
+    const { qty, inCart } = this.readCartLine(name, categoryKey)
+    if (qty !== this.data.qty || inCart !== this.data.inCart) {
+      this.setData({ qty, inCart })
     }
   },
 
-  /** 拉起菜谱分包（本地封面与正文同包），页面只展示封面 */
   loadCover() {
     const { categoryKey, name } = this.data
     this.setData({ loading: true, err: '' })
@@ -104,17 +111,46 @@ Page({
     this.setData({ coverUrl: '', coverFailed: true })
   },
 
+  openQtySheet() {
+    this.setData({
+      showQtySheet: true,
+      draftQty: this.data.inCart ? this.data.qty : 1
+    })
+  },
+
+  closeQtySheet() {
+    this.setData({ showQtySheet: false })
+  },
+
+  noop() {},
+
   dec() {
-    this.setData({ qty: Math.max(1, this.data.qty - 1) })
+    this.setData({ draftQty: Math.max(1, this.data.draftQty - 1) })
   },
 
   inc() {
-    this.setData({ qty: this.data.qty + 1 })
+    this.setData({ draftQty: this.data.draftQty + 1 })
   },
 
-  applyQty() {
-    const { name, categoryKey, categoryLabel, qty } = this.data
+  confirmQty() {
+    const { name, categoryKey, categoryLabel, draftQty, inCart } = this.data
+    const qty = Math.max(1, draftQty)
     setServings(getApp(), { name, categoryKey, categoryLabel }, qty)
-    wx.showToast({ title: '已更新菜单', icon: 'success' })
+    this.setData({ qty, inCart: true, showQtySheet: false })
+    wx.showToast({
+      title: inCart ? '已更新份数' : '已加入菜单',
+      icon: 'success'
+    })
+  },
+
+  removeFromCart() {
+    const { name, categoryKey, categoryLabel } = this.data
+    setServings(getApp(), { name, categoryKey, categoryLabel }, 0)
+    this.setData({
+      inCart: false,
+      qty: 1,
+      showQtySheet: false
+    })
+    wx.showToast({ title: '已移出菜单', icon: 'none' })
   }
 })

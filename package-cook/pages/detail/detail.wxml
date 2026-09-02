@@ -18,11 +18,29 @@
   <view class="state err" wx:if="{{err}}">{{err}}</view>
 
   <view class="bar" wx:if="{{!loading && !err}}">
-    <view class="bar-qty">
+    <button
+      class="cta {{inCart ? 'cta-soft' : ''}}"
+      bindtap="openQtySheet"
+    >{{inCart ? ('已加入 · ' + qty + ' 份') : '加入菜单'}}</button>
+  </view>
+
+  <view class="mask" wx:if="{{showQtySheet}}" catchtouchmove="noop" bindtap="closeQtySheet"></view>
+  <view class="sheet safe-bottom" wx:if="{{showQtySheet}}">
+    <view class="sheet-grab"></view>
+    <text class="sheet-title">{{inCart ? '调整份数' : '选择份数'}}</text>
+    <text class="sheet-sub">{{name}}</text>
+    <view class="sheet-qty">
       <view class="qbtn" bindtap="dec">−</view>
-      <text class="qnum">{{qty}}</text>
+      <text class="qnum">{{draftQty}}</text>
       <view class="qbtn" bindtap="inc">+</view>
     </view>
-    <button class="add-btn" bindtap="applyQty">更新到菜单</button>
+    <view class="sheet-actions">
+      <button
+        class="sheet-btn ghost"
+        wx:if="{{inCart}}"
+        bindtap="removeFromCart"
+      >移出菜单</button>
+      <button class="sheet-btn solid" bindtap="confirmQty">确定</button>
+    </view>
   </view>
 </view>

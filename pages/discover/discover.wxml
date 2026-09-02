@@ -86,10 +86,18 @@
           <text class="sheet-name">{{item.name}}</text>
           <text class="sheet-sub">{{item.categoryLabel}}</text>
         </view>
-        <view class="qty">
-          <view class="qty-btn" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" data-d="-1" bindtap="changeQty">−</view>
-          <text class="qty-num">{{item.servings}}</text>
-          <view class="qty-btn" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" data-d="1" bindtap="changeQty">+</view>
+        <view class="sheet-ops">
+          <view class="qty">
+            <view class="qty-btn" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" data-d="-1" catchtap="changeQty">−</view>
+            <text class="qty-num">{{item.servings}}</text>
+            <view class="qty-btn" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" data-d="1" catchtap="changeQty">+</view>
+          </view>
+          <text
+            class="sheet-remove"
+            data-name="{{item.name}}"
+            data-cat="{{item.categoryKey}}"
+            catchtap="removeCartItem"
+          >删除</text>
         </view>
       </view>
     </scroll-view>

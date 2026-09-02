@@ -360,6 +360,19 @@
   gap: 16rpx;
 }
 
+.sheet-ops {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex-shrink: 0;
+}
+
+.sheet-remove {
+  padding: 12rpx 8rpx 12rpx 16rpx;
+  font-size: 26rpx;
+  color: #c45c26;
+}
+
 .qty-btn {
   width: 60rpx;
   height: 60rpx;

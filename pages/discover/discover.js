@@ -3,7 +3,8 @@ const {
   readCart,
   addOrIncCart,
   writeCart,
-  saveMenuRecord
+  saveMenuRecord,
+  setServings
 } = require('../../utils/cart-store.js')
 
 const ALL_KEY = '__all__'
@@ -232,14 +233,20 @@ Page({
 
   refreshCart() {
     const cart = readCart()
-    const cartCount = cart.reduce((s, x) => s + x.servings, 0)
-    this.setData({ cart, cartCount })
+    // 角标按菜品种数：3 道菜各 2 份 → 显示 3，不是 6
+    this.setData({ cart, cartCount: cart.length })
   },
 
   changeQty(e) {
     const { name, cat, d } = e.currentTarget.dataset
     const delta = Number(d) || 0
     addOrIncCart(getApp(), { name, categoryKey: cat }, delta)
+    this.refreshCart()
+  },
+
+  removeCartItem(e) {
+    const { name, cat } = e.currentTarget.dataset
+    setServings(getApp(), { name, categoryKey: cat }, 0)
     this.refreshCart()
   },
 

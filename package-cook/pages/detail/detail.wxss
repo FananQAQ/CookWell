@@ -42,42 +42,127 @@
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
   padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
   background: #fff;
   border-top: 1rpx solid #eee9e2;
   z-index: 20;
 }
 
-.bar-qty {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-}
-
-.qbtn {
-  width: 64rpx;
-  height: 64rpx;
-  line-height: 60rpx;
-  text-align: center;
-  background: #f5f2ec;
-  border-radius: 12rpx;
-  font-size: 36rpx;
-}
-
-.qnum {
-  min-width: 48rpx;
-  text-align: center;
-  font-size: 30rpx;
-}
-
-.add-btn {
-  flex: 1;
+.cta {
+  width: 100%;
+  margin: 0;
   background: #c45c26;
   color: #fff;
   border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  line-height: 2.5;
+  border: none;
+}
+
+.cta::after {
+  border: none;
+}
+
+.cta-soft {
+  background: #f3ebe4;
+  color: #c45c26;
+}
+
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 40;
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  padding: 12rpx 32rpx calc(24rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  border-radius: 28rpx 28rpx 0 0;
+  box-sizing: border-box;
+}
+
+.sheet-grab {
+  width: 64rpx;
+  height: 8rpx;
+  margin: 0 auto 24rpx;
+  background: #e5e0d8;
+  border-radius: 4rpx;
+}
+
+.sheet-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #222;
+}
+
+.sheet-sub {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #888;
+}
+
+.sheet-qty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36rpx;
+  margin: 40rpx 0 36rpx;
+}
+
+.qbtn {
+  width: 72rpx;
+  height: 72rpx;
+  line-height: 68rpx;
+  text-align: center;
+  background: #f5f2ec;
+  border-radius: 16rpx;
+  font-size: 40rpx;
+  color: #333;
+}
+
+.qnum {
+  min-width: 64rpx;
+  text-align: center;
+  font-size: 40rpx;
+  font-weight: 600;
+}
+
+.sheet-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.sheet-btn {
+  flex: 1;
+  margin: 0;
+  border-radius: 16rpx;
   font-size: 28rpx;
   line-height: 2.4;
+  border: none;
+}
+
+.sheet-btn::after {
+  border: none;
+}
+
+.sheet-btn.ghost {
+  background: #f5f2ec;
+  color: #666;
+}
+
+.sheet-btn.solid {
+  background: #c45c26;
+  color: #fff;
 }
