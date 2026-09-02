@@ -217,7 +217,7 @@ Page({
   openDetailFromCart(e) {
     const { name, cat } = e.currentTarget.dataset
     wx.navigateTo({
-      url: `/package-cook/pages/detail/detail?name=${encodeURIComponent(name)}&categoryKey=${encodeURIComponent(cat)}`
+      url: `/package-cook/pages/detail/detail?name=${encodeURIComponent(name)}&categoryKey=${encodeURIComponent(cat)}&from=menu`
     })
   },
 

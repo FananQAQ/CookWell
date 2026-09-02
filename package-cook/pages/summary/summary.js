@@ -1,10 +1,7 @@
 const { readCart, readMenuHistory } = require('../../../utils/cart-store.js')
 const { loadMarkdown } = require('../../utils/md-cache.js')
 const { runPool } = require('../../../utils/promise-pool.js')
-const {
-  parseHowToCookMarkdown,
-  bulletLines
-} = require('../../../utils/howto-parser.js')
+const { parseHowToCookMarkdown } = require('../../../utils/howto-parser.js')
 const {
   calcIngredientLines,
   buildMergedList
@@ -14,6 +11,7 @@ const {
   writeMergedChecked,
   stableMergedEntryId
 } = require('../../../utils/summary-checked.js')
+const { resolveCoverUrls } = require('../../../utils/dish-image.js')
 
 Page({
   data: {
@@ -22,7 +20,9 @@ Page({
     err: '',
     byDish: [],
     merged: [],
-    items: []
+    items: [],
+    dishIndex: 0,
+    navScrollInto: ''
   },
 
   onLoad(query) {
@@ -48,7 +48,7 @@ Page({
     } else {
       items = readCart()
     }
-    this.setData({ items })
+    this.setData({ items, dishIndex: 0, navScrollInto: '' })
     if (!items.length) {
       this.setData({
         loading: false,
@@ -66,11 +66,36 @@ Page({
     if (m) this.setData({ viewMode: m })
   },
 
-  openDetail(e) {
-    const { name, cat } = e.currentTarget.dataset
-    wx.navigateTo({
-      url: `../detail/detail?name=${encodeURIComponent(name)}&categoryKey=${encodeURIComponent(cat)}`
+  onNavTap(e) {
+    const i = Number(e.currentTarget.dataset.i)
+    if (!Number.isFinite(i) || i < 0) return
+    this.setData({
+      dishIndex: i,
+      navScrollInto: `nav-${i}`
     })
+  },
+
+  onSwiperChange(e) {
+    const i = Number(e.detail.current)
+    if (!Number.isFinite(i)) return
+    this.setData({
+      dishIndex: i,
+      navScrollInto: `nav-${i}`
+    })
+  },
+
+  onCoverErr(e) {
+    const i = Number(e.currentTarget.dataset.i)
+    const list = this.data.byDish || []
+    const item = list[i]
+    if (!item || !item.coverFallback) return
+    if (item.coverUrl === item.coverFallback) return
+    const byDish = list.map((row, idx) =>
+      idx === i
+        ? { ...row, coverUrl: row.coverFallback, coverFallback: '' }
+        : row
+    )
+    this.setData({ byDish })
   },
 
   toggleMergedPurchased(e) {
@@ -104,15 +129,15 @@ Page({
         const mergeInputs = []
         rows.forEach(({ it, md }) => {
           const p = parseHowToCookMarkdown(md)
-          const toolLines = bulletLines(p.tools)
           const calcLines = calcIngredientLines(p.calc, it.servings)
+          const cover = resolveCoverUrls(it.categoryKey, it.name)
           byDish.push({
             name: it.name,
             categoryKey: it.categoryKey,
             categoryLabel: it.categoryLabel || '',
             servings: it.servings,
-            toolLines,
-            calcLines
+            coverUrl: cover.primary,
+            coverFallback: cover.fallback
           })
           mergeInputs.push({
             dishName: `${it.name}（×${it.servings}）`,
@@ -135,7 +160,9 @@ Page({
         this.setData({
           loading: false,
           byDish,
-          merged
+          merged,
+          dishIndex: 0,
+          navScrollInto: byDish.length ? 'nav-0' : ''
         })
       })
       .catch(e => {

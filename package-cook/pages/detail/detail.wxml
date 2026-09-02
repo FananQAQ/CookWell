@@ -1,4 +1,4 @@
-<view class="page safe-bottom">
+<view class="page safe-bottom {{showAddBar ? 'with-bar' : ''}}">
   <view class="hero" wx:if="{{coverUrl}}">
     <image
       class="cover"
@@ -17,7 +17,7 @@
 
   <view class="state err" wx:if="{{err}}">{{err}}</view>
 
-  <view class="bar" wx:if="{{!loading && !err}}">
+  <view class="bar" wx:if="{{showAddBar && !loading && !err}}">
     <button
       class="cta {{inCart ? 'cta-soft' : ''}}"
       bindtap="openQtySheet"

@@ -4,7 +4,7 @@
       class="seg-item {{viewMode === 'byDish' ? 'on' : ''}}"
       data-m="byDish"
       bindtap="setMode"
-    >按菜品</view>
+    >菜品图</view>
     <view
       class="seg-item {{viewMode === 'merged' ? 'on' : ''}}"
       data-m="merged"
@@ -12,30 +12,50 @@
     >合并清单</view>
   </view>
 
-  <view class="state" wx:if="{{loading}}">正在拉取菜谱并汇总…</view>
+  <view class="state" wx:if="{{loading}}">正在加载…</view>
   <view class="state err" wx:if="{{err}}">{{err}}</view>
 
-  <scroll-view class="body" scroll-y wx:if="{{!loading && !err}}">
+  <block wx:if="{{!loading && !err}}">
     <block wx:if="{{viewMode === 'byDish'}}">
-      <view class="card" wx:for="{{byDish}}" wx:key="name">
-        <view class="card-head">
-          <text class="dish-title">{{item.name}}</text>
-          <text class="dish-sub">{{item.categoryLabel}} · ×{{item.servings}}</text>
-        </view>
-        <view class="block" wx:if="{{item.toolLines.length}}">
-          <text class="bh">原料与工具</text>
-          <text class="li" wx:for="{{item.toolLines}}" wx:for-item="t" wx:key="*this">· {{t}}</text>
-        </view>
-        <view class="block" wx:if="{{item.calcLines.length}}">
-          <text class="bh">计算用量（已乘份数）</text>
-          <text class="li" wx:for="{{item.calcLines}}" wx:for-item="c" wx:key="*this">· {{c}}</text>
-        </view>
-        <view class="more" data-name="{{item.name}}" data-cat="{{item.categoryKey}}" bindtap="openDetail">查看做法</view>
-      </view>
+      <scroll-view
+        class="dish-nav"
+        scroll-x
+        enable-flex
+        scroll-with-animation
+        scroll-into-view="{{navScrollInto}}"
+      >
+        <view
+          id="nav-{{index}}"
+          class="dish-nav-item {{dishIndex === index ? 'on' : ''}}"
+          wx:for="{{byDish}}"
+          wx:key="name"
+          data-i="{{index}}"
+          bindtap="onNavTap"
+        >{{item.name}}</view>
+      </scroll-view>
+
+      <swiper
+        class="dish-swiper"
+        current="{{dishIndex}}"
+        bindchange="onSwiperChange"
+        duration="280"
+      >
+        <swiper-item wx:for="{{byDish}}" wx:key="name">
+          <scroll-view class="dish-slide" scroll-y>
+            <image
+              class="dish-cover"
+              src="{{item.coverUrl}}"
+              mode="widthFix"
+              data-i="{{index}}"
+              binderror="onCoverErr"
+            />
+          </scroll-view>
+        </swiper-item>
+      </swiper>
     </block>
 
-    <block wx:else>
-      <view class="hint">以下为按食材关键字分组的合并视图；带「约、可选」等字样的行仍以原文展示，请人工核对。点一行可标记「已买」，将显示删除线。</view>
+    <scroll-view class="body" scroll-y wx:else>
+      <view class="hint">合并清单会把同物异名归并（如蒜片/蒜末→大蒜）。组内仍保留各菜原文用量，请人工核对「约、可选」等表述。点一行可标记「已买」。</view>
       <view class="card" wx:for="{{merged}}" wx:key="key">
         <text class="merge-key">{{item.key}}</text>
         <view
@@ -57,6 +77,6 @@
           </view>
         </view>
       </view>
-    </block>
-  </scroll-view>
+    </scroll-view>
+  </block>
 </view>

@@ -16,6 +16,7 @@ Page({
     err: '',
     qty: 1,
     inCart: false,
+    showAddBar: true,
     showQtySheet: false,
     draftQty: 1
   },
@@ -23,6 +24,7 @@ Page({
   onLoad(query) {
     const name = decodeURIComponent(query.name || '')
     const categoryKey = decodeURIComponent(query.categoryKey || '')
+    const showAddBar = query.from !== 'menu'
     const dishes = Array.isArray(catalog.dishes) ? catalog.dishes : []
     const hit = dishes.find(
       d => d.name === name && d.categoryKey === categoryKey
@@ -39,6 +41,7 @@ Page({
       categoryLabel,
       qty,
       inCart,
+      showAddBar,
       coverUrl: earlyCover ? cover.primary : '',
       _coverFallback: cover.fallback,
       coverFailed: false,

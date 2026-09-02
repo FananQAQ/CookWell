@@ -95,7 +95,7 @@ Page({
   openDetail(e) {
     const { name, cat } = e.currentTarget.dataset
     wx.navigateTo({
-      url: `../detail/detail?name=${encodeURIComponent(name)}&categoryKey=${encodeURIComponent(cat)}`
+      url: `../detail/detail?name=${encodeURIComponent(name)}&categoryKey=${encodeURIComponent(cat)}&from=menu`
     })
   }
 })

@@ -1,7 +1,10 @@
 .page {
-  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
   min-height: 100vh;
   background: #faf8f5;
+}
+
+.page.with-bar {
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
 }
 
 .hero {
