@@ -235,14 +235,20 @@ async function main() {
     const dir = path.join(ROOT, folder, 'images', 'dishes', d.categoryKey)
     fs.mkdirSync(dir, { recursive: true })
     const base = safeFileBase(d.name)
-    const dest = path.join(dir, `${base}.jpeg`)
-    if (fs.existsSync(dest) && fs.statSync(dest).size > 500) {
+    const destJpeg = path.join(dir, `${base}.jpeg`)
+    const destWebp = path.join(dir, `${base}.webp`)
+    // 已有 webp（压缩后）或 jpeg 则跳过，避免 DISH_COVER_EXT=webp 时误判为缺失
+    const existing =
+      (fs.existsSync(destWebp) && fs.statSync(destWebp).size > 500) ||
+      (fs.existsSync(destJpeg) && fs.statSync(destJpeg).size > 500)
+    if (existing) {
       imgTried++
       if (imgTried % 40 === 0 || imgTried === total) {
         console.log(`  progress ${imgTried}/${total} (skipped existing)`)
       }
       return
     }
+    const dest = destJpeg
     try {
       const buf = await fetchImageBuf(imageUrl(d.categoryKey, d.name))
       if (buf.length < 500) throw new Error('too small')

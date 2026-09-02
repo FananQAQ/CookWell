@@ -1,7 +1,9 @@
 const catalog = require('../../../data/dishes.js')
-const { loadMarkdown } = require('../../utils/md-cache.js')
 const { resolveCoverUrls } = require('../../../utils/dish-image.js')
-const { DISH_COVER_MODE } = require('../../../utils/constants.js')
+const {
+  ensureRecipePackage,
+  isRecipePackageReady
+} = require('../../../utils/recipe-package.js')
 const { readCart, setServings } = require('../../../utils/cart-store.js')
 
 Page({
@@ -11,8 +13,8 @@ Page({
     categoryLabel: '',
     coverUrl: '',
     _coverFallback: '',
+    coverReady: false,
     coverFailed: false,
-    loading: true,
     err: '',
     qty: 1,
     inCart: false,
@@ -25,15 +27,20 @@ Page({
     const name = decodeURIComponent(query.name || '')
     const categoryKey = decodeURIComponent(query.categoryKey || '')
     const showAddBar = query.from !== 'menu'
+    // 列表页已 preload 时带 warm=1（包与解码更热），仍等 bindload 再显示，避免长图自上而下刷出
+    const warm = query.warm === '1'
     const dishes = Array.isArray(catalog.dishes) ? catalog.dishes : []
     const hit = dishes.find(
       d => d.name === name && d.categoryKey === categoryKey
     )
     const categoryLabel = hit ? hit.categoryLabel : ''
     const { qty, inCart } = this.readCartLine(name, categoryKey)
-
     const cover = resolveCoverUrls(categoryKey, name)
-    const earlyCover = DISH_COVER_MODE === 'remote'
+
+    this._pendingCover = cover
+    this._pkgReady = isRecipePackageReady(categoryKey, name) || warm
+    this._retryingPkg = false
+    this._gone = false
 
     this.setData({
       name,
@@ -42,15 +49,29 @@ Page({
       qty,
       inCart,
       showAddBar,
-      coverUrl: earlyCover ? cover.primary : '',
+      coverUrl: cover.primary,
       _coverFallback: cover.fallback,
+      coverReady: false,
       coverFailed: false,
-      loading: true,
       err: ''
     })
-    this._pendingCover = cover
     wx.setNavigationBarTitle({ title: name || '菜品详情' })
-    this.loadCover()
+
+    if (!this._pkgReady) {
+      ensureRecipePackage(categoryKey, name)
+        .then(() => {
+          if (this._gone) return
+          this._pkgReady = true
+          if (this.data.coverFailed || !this.data.coverUrl) {
+            this.reloadLocalCover()
+          }
+        })
+        .catch(e => console.warn('ensureRecipePackage', e))
+    }
+  },
+
+  onUnload() {
+    this._gone = true
   },
 
   onShow() {
@@ -74,44 +95,62 @@ Page({
     }
   },
 
-  loadCover() {
-    const { categoryKey, name } = this.data
-    this.setData({ loading: true, err: '' })
+  onCoverLoad() {
+    if (!this.data.coverReady) {
+      this.setData({ coverReady: true })
+    }
+  },
 
-    loadMarkdown(categoryKey, name)
-      .then(() => {
-        const cover = this._pendingCover || resolveCoverUrls(categoryKey, name)
-        const patch = { loading: false, err: '' }
-        if (!this.data.coverUrl && cover.primary) {
-          patch.coverUrl = cover.primary
-          patch._coverFallback = cover.fallback
-          patch.coverFailed = false
-        }
-        this.setData(patch)
+  reloadLocalCover() {
+    const cover = this._pendingCover
+    if (!cover || !cover.primary) return
+    this.setData({ coverUrl: '', coverReady: false, coverFailed: false })
+    setTimeout(() => {
+      if (this._gone) return
+      this.setData({
+        coverUrl: cover.primary,
+        _coverFallback: cover.fallback,
+        coverFailed: false
       })
-      .catch(e => {
-        console.error('loadCover', e)
-        const cover = this._pendingCover || resolveCoverUrls(categoryKey, name)
-        const patch = {
-          loading: false,
-          err: (e && (e.message || e.errMsg)) || '加载失败'
-        }
-        if (!this.data.coverUrl && cover.fallback) {
-          patch.coverUrl = cover.fallback
-          patch._coverFallback = ''
-          patch.err = ''
-        }
-        this.setData(patch)
-      })
+    }, 16)
   },
 
   onImgErr() {
+    const cover = this._pendingCover
     const { coverUrl, _coverFallback } = this.data
-    if (_coverFallback && coverUrl !== _coverFallback) {
-      this.setData({ coverUrl: _coverFallback, _coverFallback: '' })
+
+    if (!this._pkgReady && cover && cover.primary && !this._retryingPkg) {
+      this._retryingPkg = true
+      ensureRecipePackage(this.data.categoryKey, this.data.name)
+        .then(() => {
+          this._pkgReady = true
+          this._retryingPkg = false
+          this.reloadLocalCover()
+        })
+        .catch(() => {
+          this._retryingPkg = false
+          if (_coverFallback && coverUrl !== _coverFallback) {
+            this.setData({
+              coverUrl: _coverFallback,
+              _coverFallback: '',
+              coverReady: false
+            })
+          } else {
+            this.setData({ coverUrl: '', coverFailed: true, coverReady: false })
+          }
+        })
       return
     }
-    this.setData({ coverUrl: '', coverFailed: true })
+
+    if (_coverFallback && coverUrl !== _coverFallback) {
+      this.setData({
+        coverUrl: _coverFallback,
+        _coverFallback: '',
+        coverReady: false
+      })
+      return
+    }
+    this.setData({ coverUrl: '', coverFailed: true, coverReady: false })
   },
 
   openQtySheet() {

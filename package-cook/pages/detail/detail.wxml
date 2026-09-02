@@ -1,23 +1,22 @@
 <view class="page safe-bottom {{showAddBar ? 'with-bar' : ''}}">
-  <view class="hero" wx:if="{{coverUrl}}">
+  <view class="hero" wx:if="{{!coverFailed}}">
     <image
-      class="cover"
+      class="cover {{coverReady ? 'ready' : ''}}"
       src="{{coverUrl}}"
       mode="widthFix"
       lazy-load="{{false}}"
+      bindload="onCoverLoad"
       binderror="onImgErr"
+      wx:if="{{coverUrl}}"
     />
   </view>
-  <view class="hero hero-empty" wx:elif="{{coverFailed}}">
+  <view class="hero hero-empty" wx:else>
     <text class="hero-tip">暂无封面</text>
-  </view>
-  <view class="hero hero-empty" wx:elif="{{loading}}">
-    <text class="hero-tip">加载中…</text>
   </view>
 
   <view class="state err" wx:if="{{err}}">{{err}}</view>
 
-  <view class="bar" wx:if="{{showAddBar && !loading && !err}}">
+  <view class="bar" wx:if="{{showAddBar && !err}}">
     <button
       class="cta {{inCart ? 'cta-soft' : ''}}"
       bindtap="openQtySheet"

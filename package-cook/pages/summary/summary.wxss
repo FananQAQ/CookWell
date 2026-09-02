@@ -84,8 +84,14 @@
 .dish-cover {
   width: 100%;
   display: block;
-  background: #eae6df;
-  min-height: 320rpx;
+  background: #ebe4da;
+  min-height: 70vh;
+  opacity: 0;
+  transition: opacity 0.18s ease-out;
+}
+
+.dish-cover.ready {
+  opacity: 1;
 }
 
 .body {

@@ -6,6 +6,8 @@ const {
   saveMenuRecord,
   setServings
 } = require('../../utils/cart-store.js')
+const { ensureRecipePackages } = require('../../utils/recipe-package.js')
+const { preloadDishCover } = require('../../utils/cover-preload.js')
 
 const ALL_KEY = '__all__'
 const INITIAL_CATEGORIES = [{ key: ALL_KEY, label: '全部' }].concat(
@@ -208,20 +210,45 @@ Page({
 
   openDetail(e) {
     const { name, cat } = e.currentTarget.dataset
-    wx.navigateTo({
-      url: `/package-cook/pages/detail/detail?name=${encodeURIComponent(name)}&categoryKey=${encodeURIComponent(cat)}`
-    })
+    this.navigateToDetail(name, cat, false)
   },
 
   openDetailFromCart(e) {
     const { name, cat } = e.currentTarget.dataset
-    wx.navigateTo({
-      url: `/package-cook/pages/detail/detail?name=${encodeURIComponent(name)}&categoryKey=${encodeURIComponent(cat)}&from=menu`
-    })
+    this.navigateToDetail(name, cat, true)
+  },
+
+  /** 先预热封面进缓存再跳转，详情页不再露出渐进加载 */
+  navigateToDetail(name, cat, fromMenu) {
+    if (!name || !cat || this._openingDetail) return
+    this._openingDetail = true
+    let finished = false
+    const from = fromMenu ? '&from=menu' : ''
+    const go = warm => {
+      if (finished) return
+      finished = true
+      this._openingDetail = false
+      clearTimeout(timer)
+      wx.navigateTo({
+        url: `/package-cook/pages/detail/detail?name=${encodeURIComponent(
+          name
+        )}&categoryKey=${encodeURIComponent(cat)}${from}${
+          warm ? '&warm=1' : ''
+        }`
+      })
+    }
+    const timer = setTimeout(() => go(false), 1200)
+    preloadDishCover(cat, name)
+      .then(() => go(true))
+      .catch(() => go(false))
   },
 
   openCart() {
     this.setData({ showCart: true })
+    const cart = readCart()
+    if (cart.length) {
+      ensureRecipePackages(cart).catch(() => {})
+    }
   },
 
   closeCart() {
@@ -260,6 +287,10 @@ Page({
 
   goSummary() {
     this.closeCart()
+    const cart = readCart()
+    if (cart.length) {
+      ensureRecipePackages(cart).catch(() => {})
+    }
     wx.navigateTo({ url: '/package-cook/pages/summary/summary?source=cart' })
   },
 

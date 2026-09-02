@@ -12,11 +12,14 @@ const {
   stableMergedEntryId
 } = require('../../../utils/summary-checked.js')
 const { resolveCoverUrls } = require('../../../utils/dish-image.js')
+const { ensureRecipePackages, ensureRecipePackage } = require('../../../utils/recipe-package.js')
+const { preloadDishCovers } = require('../../../utils/cover-preload.js')
 
 Page({
   data: {
     viewMode: 'byDish',
     loading: true,
+    mergedLoading: false,
     err: '',
     byDish: [],
     merged: [],
@@ -29,12 +32,15 @@ Page({
     this.source = query.source === 'saved' ? 'saved' : 'cart'
     this.recordId = query.id ? decodeURIComponent(query.id) : ''
     this.checkedMap = readMergedChecked(this.source, this.recordId)
+    this._loadToken = 0
+    this._mergedErr = ''
     this.bootstrap()
   },
 
   onShow() {
     if (this.source === 'cart') {
       this.checkedMap = readMergedChecked(this.source, this.recordId)
+      this._mergedErr = ''
       this.bootstrap()
     }
   },
@@ -52,6 +58,7 @@ Page({
     if (!items.length) {
       this.setData({
         loading: false,
+        mergedLoading: false,
         err: '没有菜品可汇总',
         byDish: [],
         merged: []
@@ -63,7 +70,14 @@ Page({
 
   setMode(e) {
     const m = e.currentTarget.dataset.m
-    if (m) this.setData({ viewMode: m })
+    if (!m) return
+    const patch = { viewMode: m }
+    if (m === 'merged' && this._mergedErr && !(this.data.merged || []).length) {
+      patch.err = this._mergedErr
+    } else if (m === 'byDish' && this.data.byDish && this.data.byDish.length) {
+      patch.err = ''
+    }
+    this.setData(patch)
   },
 
   onNavTap(e) {
@@ -84,11 +98,73 @@ Page({
     })
   },
 
+  onCoverLoad(e) {
+    const i = Number(e.currentTarget.dataset.i)
+    const list = this.data.byDish || []
+    if (!Number.isFinite(i) || !list[i] || list[i].coverReady) return
+    const byDish = list.map((row, idx) =>
+      idx === i ? { ...row, coverReady: true } : row
+    )
+    this.setData({ byDish })
+  },
+
   onCoverErr(e) {
     const i = Number(e.currentTarget.dataset.i)
     const list = this.data.byDish || []
     const item = list[i]
-    if (!item || !item.coverFallback) return
+    if (!item) return
+
+    // 先等分包再试本地；远程 JPEG 往往更大，作为最后手段
+    if (!item._pkgTried) {
+      const byDish = list.map((row, idx) =>
+        idx === i ? { ...row, _pkgTried: true } : row
+      )
+      this.setData({ byDish })
+      ensureRecipePackage(item.categoryKey, item.name)
+        .then(() => {
+          const cur = (this.data.byDish || [])[i]
+          if (!cur || cur.name !== item.name) return
+          const next = (this.data.byDish || []).map((row, idx) =>
+            idx === i
+              ? {
+                  ...row,
+                  coverUrl: '',
+                  coverFallback: row.coverFallback
+                }
+              : row
+          )
+          this.setData({ byDish: next })
+          setTimeout(() => {
+            const latest = (this.data.byDish || []).map((row, idx) => {
+              if (idx !== i) return row
+              const cover = resolveCoverUrls(row.categoryKey, row.name)
+              return {
+                ...row,
+                coverUrl: cover.primary,
+                coverFallback: cover.fallback,
+                coverReady: false
+              }
+            })
+            this.setData({ byDish: latest })
+          }, 16)
+        })
+        .catch(() => {
+          if (!item.coverFallback) return
+          const next = (this.data.byDish || []).map((row, idx) =>
+            idx === i
+              ? {
+                  ...row,
+                  coverUrl: row.coverFallback,
+                  coverFallback: ''
+                }
+              : row
+          )
+          this.setData({ byDish: next })
+        })
+      return
+    }
+
+    if (!item.coverFallback) return
     if (item.coverUrl === item.coverFallback) return
     const byDish = list.map((row, idx) =>
       idx === i
@@ -118,27 +194,53 @@ Page({
     this.setData({ merged })
   },
 
+  buildByDish(items) {
+    return items.map(it => {
+      const cover = resolveCoverUrls(it.categoryKey, it.name)
+      return {
+        name: it.name,
+        categoryKey: it.categoryKey,
+        categoryLabel: it.categoryLabel || '',
+        servings: it.servings,
+        coverUrl: cover.primary,
+        coverFallback: cover.fallback,
+        coverReady: false
+      }
+    })
+  },
+
   loadAll(items) {
-    this.setData({ loading: true, err: '' })
+    const token = ++this._loadToken
+    this._mergedErr = ''
+    const byDish = this.buildByDish(items)
+
+    // 菜品图结构先出；图本身等 bindload 再淡入，避免自上而下「刷出来」
+    this.setData({
+      loading: false,
+      err: '',
+      byDish,
+      merged: [],
+      mergedLoading: true,
+      dishIndex: 0,
+      navScrollInto: byDish.length ? 'nav-0' : ''
+    })
+
+    preloadDishCovers(items, 3).catch(() => {})
+
+    ensureRecipePackages(items).catch(e => {
+      console.warn('ensureRecipePackages', e)
+    })
+
     const concurrency = 3
     runPool(items, concurrency, it =>
       loadMarkdown(it.categoryKey, it.name).then(md => ({ it, md }))
     )
       .then(rows => {
-        const byDish = []
+        if (token !== this._loadToken) return
         const mergeInputs = []
         rows.forEach(({ it, md }) => {
           const p = parseHowToCookMarkdown(md)
           const calcLines = calcIngredientLines(p.calc, it.servings)
-          const cover = resolveCoverUrls(it.categoryKey, it.name)
-          byDish.push({
-            name: it.name,
-            categoryKey: it.categoryKey,
-            categoryLabel: it.categoryLabel || '',
-            servings: it.servings,
-            coverUrl: cover.primary,
-            coverFallback: cover.fallback
-          })
           mergeInputs.push({
             dishName: `${it.name}（×${it.servings}）`,
             lines: calcLines
@@ -157,21 +259,17 @@ Page({
             }
           })
         }))
-        this.setData({
-          loading: false,
-          byDish,
-          merged,
-          dishIndex: 0,
-          navScrollInto: byDish.length ? 'nav-0' : ''
-        })
+        this.setData({ merged, mergedLoading: false, err: '' })
+        this._mergedErr = ''
       })
       .catch(e => {
-        this.setData({
-          loading: false,
-          err: e.message || '汇总失败',
-          byDish: [],
-          merged: []
-        })
+        if (token !== this._loadToken) return
+        this._mergedErr = e.message || '汇总失败'
+        const patch = { mergedLoading: false, merged: [] }
+        if (this.data.viewMode === 'merged') {
+          patch.err = this._mergedErr
+        }
+        this.setData(patch)
       })
   }
 })

@@ -7,6 +7,7 @@
     "compress:dishes:hard": "node scripts/compress-dish-images.mjs --preset=hard",
     "compress:dishes:extreme": "node scripts/compress-dish-images.mjs --preset=extreme",
     "compress:dishes:webp": "node scripts/compress-dish-images.mjs --preset=hard --webp",
+    "fill:covers": "node scripts/fill-missing-covers.mjs",
     "reshard:pkgs": "node scripts/reshard-large-pkgs.mjs"
   },
   "devDependencies": {

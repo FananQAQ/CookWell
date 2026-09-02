@@ -5,8 +5,8 @@ module.exports = {
 
   /**
    * 封面策略
-   * - local：分包本地图优先（正文与封面同包，分包下载完成后即可显示，不依赖 GitHub）
-   * - remote：图床 URL 立刻显示；真机需配置 downloadFile 合法域名
+   * - local：本地分包 webp 优先（约 25KB）；远程图床 JPEG 单张可能 >600KB，仅作回退
+   * - remote：图床 URL 立刻请求；真机需配置 downloadFile 合法域名
    */
   DISH_COVER_MODE: 'local',
 

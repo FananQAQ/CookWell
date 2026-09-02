@@ -8,15 +8,17 @@
 }
 
 .hero {
-  background: #eae6df;
-  min-height: 200rpx;
+  background: #ebe4da;
+  min-height: 70vh;
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  min-height: 70vh;
 }
 
 .hero-tip {
@@ -28,6 +30,12 @@
   width: 100%;
   display: block;
   min-height: 200rpx;
+  opacity: 0;
+  transition: opacity 0.18s ease-out;
+}
+
+.cover.ready {
+  opacity: 1;
 }
 
 .state {

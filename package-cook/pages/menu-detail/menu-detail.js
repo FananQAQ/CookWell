@@ -3,6 +3,7 @@ const {
   updateMenuTitle,
   deleteMenuRecord
 } = require('../../../utils/cart-store.js')
+const { preloadDishCover } = require('../../../utils/cover-preload.js')
 
 function formatLocal(iso) {
   if (!iso) return ''
@@ -94,8 +95,25 @@ Page({
 
   openDetail(e) {
     const { name, cat } = e.currentTarget.dataset
-    wx.navigateTo({
-      url: `../detail/detail?name=${encodeURIComponent(name)}&categoryKey=${encodeURIComponent(cat)}&from=menu`
-    })
+    if (!name || !cat || this._openingDetail) return
+    this._openingDetail = true
+    let finished = false
+    const go = warm => {
+      if (finished) return
+      finished = true
+      this._openingDetail = false
+      clearTimeout(timer)
+      wx.navigateTo({
+        url: `../detail/detail?name=${encodeURIComponent(
+          name
+        )}&categoryKey=${encodeURIComponent(cat)}&from=menu${
+          warm ? '&warm=1' : ''
+        }`
+      })
+    }
+    const timer = setTimeout(() => go(false), 1200)
+    preloadDishCover(cat, name)
+      .then(() => go(true))
+      .catch(() => go(false))
   }
 })

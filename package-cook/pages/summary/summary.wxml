@@ -12,10 +12,9 @@
     >合并清单</view>
   </view>
 
-  <view class="state" wx:if="{{loading}}">正在加载…</view>
   <view class="state err" wx:if="{{err}}">{{err}}</view>
 
-  <block wx:if="{{!loading && !err}}">
+  <block wx:if="{{!err}}">
     <block wx:if="{{viewMode === 'byDish'}}">
       <scroll-view
         class="dish-nav"
@@ -43,10 +42,11 @@
         <swiper-item wx:for="{{byDish}}" wx:key="name">
           <scroll-view class="dish-slide" scroll-y>
             <image
-              class="dish-cover"
+              class="dish-cover {{item.coverReady ? 'ready' : ''}}"
               src="{{item.coverUrl}}"
               mode="widthFix"
               data-i="{{index}}"
+              bindload="onCoverLoad"
               binderror="onCoverErr"
             />
           </scroll-view>
@@ -54,28 +54,32 @@
       </swiper>
     </block>
 
-    <scroll-view class="body" scroll-y wx:else>
-      <view class="card" wx:for="{{merged}}" wx:key="key">
-        <text class="merge-key">{{item.key}}</text>
-        <view
-          class="merge-row {{en.purchased ? 'purchased' : ''}}"
-          wx:for="{{item.entries}}"
-          wx:for-item="en"
-          wx:for-index="ei"
-          wx:key="_id"
-          data-id="{{en._id}}"
-          bindtap="toggleMergedPurchased"
-        >
-          <view class="merge-row-inner">
-            <text class="merge-check" wx:if="{{en.purchased}}">✓</text>
-            <text class="merge-check off" wx:else>○</text>
-            <view class="merge-text">
-              <text class="merge-dish">{{en.dish}}</text>
-              <text class="merge-line">{{en.line}}</text>
+    <block wx:else>
+      <view class="state" wx:if="{{mergedLoading}}">正在汇总清单…</view>
+      <scroll-view class="body" scroll-y wx:elif="{{merged.length}}">
+        <view class="card" wx:for="{{merged}}" wx:key="key">
+          <text class="merge-key">{{item.key}}</text>
+          <view
+            class="merge-row {{en.purchased ? 'purchased' : ''}}"
+            wx:for="{{item.entries}}"
+            wx:for-item="en"
+            wx:for-index="ei"
+            wx:key="_id"
+            data-id="{{en._id}}"
+            bindtap="toggleMergedPurchased"
+          >
+            <view class="merge-row-inner">
+              <text class="merge-check" wx:if="{{en.purchased}}">✓</text>
+              <text class="merge-check off" wx:else>○</text>
+              <view class="merge-text">
+                <text class="merge-dish">{{en.dish}}</text>
+                <text class="merge-line">{{en.line}}</text>
+              </view>
             </view>
           </view>
         </view>
-      </view>
-    </scroll-view>
+      </scroll-view>
+      <view class="state" wx:else>暂无清单</view>
+    </block>
   </block>
 </view>
